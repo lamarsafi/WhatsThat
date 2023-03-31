@@ -21,7 +21,7 @@ export default class Home extends Component {
     return (
       <>
       <Text>This a home screen</Text>
-      <Text>Testing if github is working</Text>
+      <Text>Testing if github is workidwasdng</Text>
       </>
     );
   }

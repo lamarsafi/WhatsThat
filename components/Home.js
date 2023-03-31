@@ -19,7 +19,10 @@ export default class Home extends Component {
 
   render() {
     return (
+      <>
       <Text>This a home screen</Text>
+      <Text>Testing if github is working</Text>
+      </>
     );
   }
 }

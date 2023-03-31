@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, Component } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 
-export const Register = (props) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
 
-    const handleSubmit = () => {
-        console.log(email);
+export default class SecondRegister extends Component {
+    constructor(props){
+        super(props)
+
+        this.state= {
+            firstName: null,
+            lastName: null,
+            email: null,
+            password: null
+        }
+    }
+
+    handleChange = (key, value) => {
+        this.setState({ [key]: value });
+      }
+
+    handleSubmit = (e) => {
+        
 
         let registerInformation = {
-            "first_name": firstName,
-            "last_name": lastName,
-            "email": email,
-            "password": password
+            "first_name": this.state.firstName,
+            "last_name": this.state.lastName,
+            "email": this.state.email,
+            "password": this.state.password
         };
 
         return fetch("http://localhost:3333/api/1.0.0/user", {
@@ -36,52 +47,56 @@ export const Register = (props) => {
         })
         .then((rJson) => {
             console.log(rJson);
+            
         })
         .catch((error) => {
             console.log(error);
         });
-    };
+    }
 
-    return(
-        <View style={styles.container}>
-            <View style={styles.box}>
-                <Text style={styles.title}>Register</Text>
-                <TextInput
-                    style={styles.input}
-                    value={firstName}
-                    onChangeText={(value) => setFirstName(value)}
-                    placeholder='First Name'
-                />
-                <TextInput
-                    style={styles.input}
-                    value={lastName}
-                    onChangeText={(value) => setLastName(value)}
-                    placeholder='Last Name'
-                />
-                <TextInput
-                    style={styles.input}
-                    value={email}
-                    onChangeText={(value) => setEmail(value)}
-                    placeholder='youremail@gmail.com'
-                    keyboardType='email-address'
-                />
-                <TextInput
-                    style={styles.input}
-                    value={password}
-                    onChangeText={(value) => setPassword(value)}
-                    placeholder='*******'
-                    secureTextEntry={true}
-                />
-                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Sign Up</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.secondaryButton} onPress={() => props.onFormSwitch('login')}>
-                    <Text style={styles.secondaryButtonText}>Already Registered? Log In here!</Text>
-                </TouchableOpacity>
+    render(){
+        return(
+            <View style={styles.container}>
+                <View style={styles.box}>
+                    <Text style={styles.title}>Register</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={this.state.firstName}
+                        onChangeText={(value) => this.handleChange('firstName', value)}
+                        placeholder='First Name'
+                    />
+                    <TextInput
+                        style={styles.input}
+                        value={this.state.lastName}
+                        onChangeText={(value) => this.handleChange('lastName', value)}
+                        placeholder='Last Name'
+                    />
+                    <TextInput
+                        style={styles.input}
+                        value={this.state.email}
+                        onChangeText={(value) => this.handleChange('email', value)}
+                        placeholder='youremail@gmail.com'
+                        keyboardType='email-address'
+                    />
+                    <TextInput
+                        style={styles.input}
+                        value={this.state.password}
+                        onChangeText={(value) => this.handleChange('password', value)}
+                        placeholder='*******'
+                        secureTextEntry={true}
+                    />
+                    <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
+                        <Text style={styles.buttonText}>Sign Up</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.secondaryButton} onPress={() => this.props.navigation.navigate('Login')}>
+                        <Text style={styles.secondaryButtonText}>Already Registered? Log In here!</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
-    );
-};
+        );
+    }
+}
+
 
 const styles = StyleSheet.create({
     container: {
@@ -117,7 +132,7 @@ const styles = StyleSheet.create({
         borderBottomColor: 'white',
         padding: 10,
         marginBottom: 20,
-        color: 'white',
+        color: 'black',
         },
         button: {
             backgroundColor: '#0066FF',

@@ -33,7 +33,7 @@ export default class Screens extends Component {
         const value = await AsyncStorage.getItem('whatsthat_session_token');
         console.log(value)
         if(value == null) {
-            this.props.navigation.navigate('Login');
+            this.props.navigation.navigate('LoginScreen');
         }
     }
 
@@ -42,8 +42,7 @@ export default class Screens extends Component {
           <Tab.Navigator>
             <Tab.Screen name='Home' component={Home} /> 
             <Tab.Screen name='Profile' component={Profile} /> 
-            <Tab.Screen name='Login' component={Login} /> 
-            <Tab.Screen name='Register' component={Register} /> 
+
             <Tab.Screen name='Settings' component={Settings} /> 
           </Tab.Navigator>
         );

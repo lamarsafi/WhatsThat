@@ -13,10 +13,11 @@ import { createBottomTabNavigator, useBottomTabBarHeight } from '@react-navigati
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { registerAsset } from 'react-native-web/dist/cjs/modules/AssetRegistry';
 import Screens from './components/Screens';
+import BlockedContacts from './components/BlockedContacts';
 
 
 const AuthStack = createStackNavigator();
-const Tabs = createBottomTabNavigator();
+
 
 
 
@@ -39,6 +40,8 @@ export default function App() {
           
           <AuthStack.Screen name='Screen' component={Screens} />
           <AuthStack.Screen name='Home' component={Home} />
+          <AuthStack.Screen name='BlockedContacts' component={BlockedContacts}  />
+          
           <AuthStack.Screen name='LoginScreen' component={SecondLogin} />
           <AuthStack.Screen name='Register' component={SecondRegister} />
           <AuthStack.Screen name='Profile' component={Profile} />

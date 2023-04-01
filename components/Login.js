@@ -27,7 +27,7 @@ export default class SecondLogin extends Component {
         const value = await AsyncStorage.getItem('whatsthat_session_token');
         console.log(value)
         if(value != null) {
-            this.props.navigation.navigate('Home');
+            this.props.navigation.navigate('Screen');
         }
     }
 
@@ -51,7 +51,7 @@ export default class SecondLogin extends Component {
         })
           .then(response => {
             if (response.status === 200) {
-              this.props.navigation.navigate('Home')
+              this.props.navigation.navigate('Screen')
               return response.json();
             } else {
               throw "Unable to Login"
@@ -69,6 +69,9 @@ export default class SecondLogin extends Component {
             }
           })
           .catch(error => console.error(error));
+
+          const myUserId = AsyncStorage.getItem("whatsthat_user_id")
+          console.log("Logged in.. your id is: ", myUserId)
       }
 
       render(){

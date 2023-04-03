@@ -12,10 +12,13 @@ export class Profile extends Component {
       image: null,
       error: null,
       file: null,
+      token: null,
     };
   }
 
   async componentDidMount() {
+    this.setState({token: AsyncStorage.getItem('whatsthat_session_token')})
+    console.log("this", this.state.token)
     try {
       const id = await AsyncStorage.getItem("whatsthat_user_id");
       const token = await AsyncStorage.getItem("whatsthat_session_token");
@@ -28,6 +31,7 @@ export class Profile extends Component {
       const imageUrl = URL.createObjectURL(imageData);
       this.setState({ image: imageUrl });
     } catch (error) {
+      console.log(error)
       this.setState({ image: defaultImage, error });
     }
   }
@@ -55,7 +59,7 @@ export class Profile extends Component {
       const response = await fetch(`http://localhost:3333/api/1.0.0/user/${id}/photo`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'X-Authorization': this.state.token,
         },
         body: formData,
       });

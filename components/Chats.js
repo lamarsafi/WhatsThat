@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { Component } from "react"
+import { Text } from "react-native-web";
 
 
 export default class Chats extends Component {
@@ -12,30 +13,10 @@ export default class Chats extends Component {
         }
     }
 
-    componentDidMount(){
-        this.unsubscribe = this.props.navigation.addListener('focus', () => {
-            this.checkLoggedIn();
-        })
-      }
-  
-      componentWillUnmount(){
-          this.unsubscribe();
-      }
-  
-      checkLoggedIn = async () => {
-          const userToken = await AsyncStorage.getItem('whatsthat_session_token');
-          const userId = await AsyncStorage.getItem('whatsthat_user_id')
-          console.log(value)
-          if(userToken != null) {
-              this.state.id = userId
-              this.state.token = userToken
-
-          }
-      }
 
       render(){
         return (
-            
+            <Text>Hello</Text>
         )
       }
 }

@@ -88,7 +88,7 @@ export default class SecondRegister extends Component {
                     <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
                         <Text style={styles.buttonText}>Sign Up</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.secondaryButton} onPress={() => this.props.navigation.navigate('LoginScreen')}>
+                    <TouchableOpacity style={styles.secondaryButton} onPress={() => this.props.navigation.navigate('Login')}>
                         <Text style={styles.secondaryButtonText}>Already Registered? Log In here!</Text>
                     </TouchableOpacity>
                 </View>

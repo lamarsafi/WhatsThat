@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, Button } from 'rea
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class SecondLogin extends Component {
+  
     constructor(props) {
         super(props);
 
@@ -27,7 +28,7 @@ export default class SecondLogin extends Component {
         const value = await AsyncStorage.getItem('whatsthat_session_token');
         console.log(value)
         if(value != null) {
-            this.props.navigation.navigate('Screen');
+          
         }
     }
 
@@ -37,7 +38,8 @@ export default class SecondLogin extends Component {
     }
 
     handleSubmit = (e) => {
-        e.preventDefault();
+      const navigation = this.props.navigation;
+        
     
         fetch('http://localhost:3333/api/1.0.0/login', {
           method: 'POST',
@@ -51,7 +53,6 @@ export default class SecondLogin extends Component {
         })
           .then(response => {
             if (response.status === 200) {
-              this.props.navigation.navigate('Screen')
               return response.json();
             } else {
               throw "Unable to Login"
@@ -62,6 +63,7 @@ export default class SecondLogin extends Component {
             try {
               await AsyncStorage.setItem("whatsthat_user_id", responseJSON.id)
               await AsyncStorage.setItem("whatsthat_session_token", responseJSON.token)
+              window.location.reload()
     
               
             } catch {
@@ -75,6 +77,7 @@ export default class SecondLogin extends Component {
       }
 
       render(){
+        
         return(
             <View style={styles.container}>
             <View style={styles.box}>

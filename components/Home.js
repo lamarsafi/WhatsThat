@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SecondLogin from './Login';
-import SecondRegister from './Register';
+
 import { Profile } from './Profile';
 
 const Tab = createBottomTabNavigator();

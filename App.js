@@ -1,97 +1,99 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { Login } from './components/Login';
-import { Register } from './components/Register';
-import Home from './components/Home';
-import { Profile } from './components/Profile';
-import SecondLogin from './components/Login';
-import SecondRegister from './components/Register';
-import Screens from './components/Screens';
-import BlockedContacts from './components/BlockedContacts';
-import Contacts from './components/Contacts';
-import Settings from './components/Settings';
-
+import React, { Component } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import IonIcons from 'react-native-vector-icons/Ionicons';
+import Home from './components/Home';
+import Contacts from './components/Contacts';
+import UserSettings from './components/Settings';
+import { Profile } from './components/Profile';
+import SecondLogin from './components/Login';
+import SecondRegister from './components/Register';
+import Chats from './components/Chats';
+import BlockedContacts from './components/BlockedContacts';
 
 const AuthStack = createStackNavigator();
-const Tabs = createBottomTabNavigator();
-const HomeStack = createStackNavigator();
-const ProfileStack = createStackNavigator();
-const ContactStack = createStackNavigator();
-const SettingsStack = createStackNavigator();
-
-const HomeStackScreen = () => {
-  return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen name='HomeMain' component={Home} options={{ title: 'Home' }} />
-    </HomeStack.Navigator>
-  );
-};
-
-const ProfileStackScreen = () => {
-  
-  return (
-    <ProfileStack.Navigator>
-      <ProfileStack.Screen name='ProfileMain' component={Profile} />
-    </ProfileStack.Navigator>
-  );
-};
-
-const ContactStackScreen = () => {
-  return (
-    <ContactStack.Navigator>
-      <ContactStack.Screen name='ContactContacts' component={Contacts} options={{ headerShown: false }}/>
-    </ContactStack.Navigator>
-  );
-};
-
-const SettingsStackScreen = () => {
-  return (
-    <SettingsStack.Navigator>
-
-      <SettingsStack.Screen name='SettingsStack' component={Settings} options={{ headerShown: false }} />
-    </SettingsStack.Navigator>
-  );
-};
-
-const AuthStackScreen = () => {
-  return (
-    <AuthStack.Navigator>
-      <AuthStack.Screen name='SecondLogin' component={SecondLogin} options={{ headerShown: false }}/>
-      <AuthStack.Screen name='SecondRegister' component={SecondRegister} options={{ headerShown: false }}/>
-    </AuthStack.Navigator>
-  );
-};
-
+const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hasToken: false,
+    };
+  }
 
-  return (
-    <NavigationContainer>
-      {isAuthenticated ? (
-        <Tabs.Navigator>
-          <Tabs.Screen name='Home' component={HomeStackScreen} />
-          <Tabs.Screen name='Profile' component={ProfileStackScreen} />
-          <Tabs.Screen name='Contacts' component={ContactStackScreen} />
-          <Tabs.Screen name='Settings' component={SettingsStackScreen} />
-        </Tabs.Navigator>
-      ) : (
-        <Stack.Screen name="Login">
-          {props => <LoginScreen {...props} handleLogin={handleLogin} />}
-        </Stack.Screen>
-      )}
-    </NavigationContainer>
-  );
+  async componentDidMount() {
+    const token = await AsyncStorage.getItem('whatsthat_session_token');
+    if (token) {
+      this.setState({ hasToken: true });
+    }
+  }
+
+  componentWillUnmount(){
+    this.unsubscribe();
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
-  },
-});
+checkLoggedIn = async () => {
+    const value = await AsyncStorage.getItem('whatsthat_session_token');
+    console.log(value)
+    if(value != null) {
+        this.props.navigation.navigate('Home');
+    }
+  }
+
+  render() {
+    const { hasToken } = this.state;
+    if (!hasToken) {
+      return (
+        <NavigationContainer>
+          <AuthStack.Navigator>
+            <AuthStack.Screen name="Login" component={SecondLogin} options={{ headerShown: false }} />
+            <AuthStack.Screen name="Register" component={SecondRegister} options={{ headerShown: false }} />
+          </AuthStack.Navigator>
+        </NavigationContainer>
+      );
+    }
+
+    return (
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
+
+              if (route.name === 'Home') {
+                iconName = focused ? 'home' : 'home-outline';
+              } else if (route.name === 'Profile') {
+                iconName = focused ? 'person' : 'person-outline';
+              } else if (route.name === 'Contacts') {
+                iconName = focused ? 'send' : 'send-outline';
+              } else if (route.name === 'Settings') {
+                iconName = focused ? 'settings' : 'settings-outline';
+              } else if (route.name === 'Chats') {
+                iconName = focused ? 'chatbox' : 'chatbox-ellipses-outline';
+              }
+              
+
+              return <IonIcons name={iconName} size={size} color={color} />;
+            },
+          })}
+        >
+          <Tab.Screen name="Home" component={Home} />
+          <Tab.Screen name="Chats" component={Chats} />
+          <Tab.Screen name="Contacts" component={Contacts} />
+          <Tab.Screen name="Profile" component={Profile} />
+          <Tab.Screen name="Settings" component={UserSettings} />
+          
+        </Tab.Navigator>
+        <Stack.Navigator>
+          <Stack.Screen name="BlockedContacts" component={BlockedContacts} />
+      </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+}
+
+export default App;

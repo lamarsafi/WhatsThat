@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 function Settings() {
@@ -53,16 +53,46 @@ function Settings() {
   }, [isLoggedIn]);
 
   return (
-    <>
-      <Text>This is your settings screen</Text>
-      <TouchableOpacity onPress={logOut}>
-        <Text>Log out</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Settings</Text>
+      <TouchableOpacity style={styles.button} onPress={logOut}>
+        <Text style={styles.buttonText}>Log out</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('BlockedContacts')}>
-        <Text>View blocked contacts</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('BlockedContacts')}>
+        <Text style={styles.buttonText}>View blocked contacts</Text>
       </TouchableOpacity>
-    </>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Profile')}>
+        <Text style={styles.buttonText}>View Profile</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: '#4b9cdb',
+    borderRadius: 10,
+    padding: 16,
+    width: '80%',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default Settings;

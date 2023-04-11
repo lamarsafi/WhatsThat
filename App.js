@@ -12,6 +12,8 @@ import SecondLogin from './components/Login';
 import SecondRegister from './components/Register';
 import Chats from './components/Chats';
 import BlockedContacts from './components/BlockedContacts';
+import Search from './components/Search';
+
 
 const AuthStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -59,38 +61,42 @@ checkLoggedIn = async () => {
 
     return (
       <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName;
-
-              if (route.name === 'Home') {
-                iconName = focused ? 'home' : 'home-outline';
-              } else if (route.name === 'Profile') {
-                iconName = focused ? 'person' : 'person-outline';
-              } else if (route.name === 'Contacts') {
-                iconName = focused ? 'send' : 'send-outline';
-              } else if (route.name === 'Settings') {
-                iconName = focused ? 'settings' : 'settings-outline';
-              } else if (route.name === 'Chats') {
-                iconName = focused ? 'chatbox' : 'chatbox-ellipses-outline';
-              }
-              
-
-              return <IonIcons name={iconName} size={size} color={color} />;
-            },
-          })}
-        >
-          <Tab.Screen name="Home" component={Home} />
-          <Tab.Screen name="Chats" component={Chats} />
-          <Tab.Screen name="Contacts" component={Contacts} />
-          <Tab.Screen name="Profile" component={Profile} />
-          <Tab.Screen name="Settings" component={UserSettings} />
-          
-        </Tab.Navigator>
         <Stack.Navigator>
+          <Stack.Screen name="Main" options={{ headerShown: false }}>
+            {() => (
+              <Tab.Navigator
+                screenOptions={({ route }) => ({
+                  tabBarIcon: ({ focused, color, size }) => {
+                    let iconName;
+
+                    if (route.name === 'Home') {
+                      iconName = focused ? 'home' : 'home-outline';
+                    } else if (route.name === 'Contacts') {
+                      iconName = focused ? 'send' : 'send-outline';
+                    } else if (route.name === 'Search') {
+                      iconName = focused ? 'search' : 'search-outline';
+                    }else if (route.name === 'Settings') {
+                      iconName = focused ? 'settings' : 'settings-outline';
+                    } else if (route.name === 'Chats') {
+                      iconName = focused ? 'chatbox' : 'chatbox-ellipses-outline';
+                    }
+                    
+                    return <IonIcons name={iconName} size={size} color={color} />;
+                  },
+                })}
+              >
+                <Tab.Screen name="Home" component={Home} />
+                <Tab.Screen name="Chats" component={Chats} />
+                <Tab.Screen name="Contacts" component={Contacts} />
+                <Tab.Screen name="Search" component={Search} />
+                <Tab.Screen name="Settings" component={UserSettings} />
+              </Tab.Navigator>
+            )}
+          </Stack.Screen>
           <Stack.Screen name="BlockedContacts" component={BlockedContacts} />
-      </Stack.Navigator>
+          <Stack.Screen name="Profile" component={Profile} />
+          
+        </Stack.Navigator>
       </NavigationContainer>
     );
   }

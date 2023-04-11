@@ -1,212 +1,168 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, {Component} from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native-web";
-import DeleteIcon from '../images/delete.png'
-import { CurrentRenderContext } from "@react-navigation/native";
-import DefaultPicture from '../images/default.jpeg'
+import React, { Component } from 'react';
+import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+function SearchBar(props) {
+  return (
+    <View >
+      <TextInput style={styles.searchBar}
+        placeholder="Search contacts..."
+        onChangeText={props.onSearch}
+        
+      />
+    </View>
+  );
+}
 
 export default class Contacts extends Component {
-    constructor(props){
-        super(props)
+  state = {
+    contacts: [],
+    sessionToken: '',
+    contactPhotos: {},
+    searchQuery: '',
+  };
 
-        this.state = {
-            error: '',
-            token: '',
-            contacts: '',
-            error: '',
-        }
-    }
+  componentDidMount() {
+    this.getSessionToken();
+    this.getContacts();
+  }
 
-    componentDidMount(){
-        this.unsubscribe = this.props.navigation.addListener('focus', () => {
-            this.checkLoggedIn();
-        })
-    }
-
-    componentWillUnmount(){
-        this.unsubscribe();
-    }
-
-    checkLoggedIn = async () => {
-        const value = await AsyncStorage.getItem('whatsthat_session_token');
-        console.log(value);
-        if (value == null) {
-          this.props.navigation.navigate('LoginScreen');
-        } else {
-          this.setState({ token: value }); // use setState() to update state
-          fetch('http://localhost:3333/api/1.0.0/contacts', {
-            method: 'GET',
-            headers: {
-              'X-Authorization': value,
-            },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              this.setState({ contacts: data });
-            })
-            .catch((error) => {
-              console.error(error);
-              this.setState({ error: 'Failed to fetch contacts' });
-            });
-        }
-      };
-      
-      handleDeleteContact = async (contact) => {
-        
-        const updatedContacts = this.state.contacts.filter(c => c.user_id !== contact.user_id);
-        try {
-          const token = await AsyncStorage.getItem("whatsthat_session_token");
-          await fetch(`http://localhost:3333/api/1.0.0/user/${contact.user_id}/contact`, {
-            method: 'DELETE',
-            headers: {
-              'X-Authorization': token,
-            },
-          });
-          this.setState({ contacts: updatedContacts });
-        } catch (error) {
-          console.log(error);
-        }
+  async getSessionToken() {
+    try {
+      const sessionToken = await AsyncStorage.getItem('whatsthat_session_token');
+      if (sessionToken !== null) {
+        this.state.sessionToken = sessionToken;
       }
-      
-
-      handleAddContactPress = () => {
-        this.props.navigation.navigate('AddContactScreen');
-      }
-
-
-      
-      render() {
-        
-        if (this.state.error) {
-          return <Text>{error}</Text>;
-        }
-        if (!this.state.contacts) {
-          return <Text>Loading contacts...</Text>;
-        }
-      
-        const contactElements = this.state.contacts.map((contact) => {
-          let imageUrl = DefaultPicture;
-          fetch(`http://localhost:3333/api/1.0.0/user/${contact.user_id}/photo`, {
-            headers: {
-              'X-Authorization': this.state.token,
-            },
-          })
-            .then((response) => {
-              if (response.ok) {
-                return response.blob();
-              }
-              throw new Error('Failed to load profile picture');
-            })
-            .then((blob) => {
-              imageUrl = URL.createObjectURL(blob);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-      
-          return (
-            <View key={contact.user_id} style={styles.contactBox}>
-              <Image
-                id="test"
-                style={styles.profilePicture}
-                source={{ uri: imageUrl }}
-              />
-              <TouchableOpacity
-                source="../images/delete.png"
-                style={styles.deleteIcon}
-              />
-              <View style={styles.contactInfo}>
-                <Text style={styles.contactName}>
-                  {contact.first_name} {contact.last_name}
-                </Text>
-                <Text style={styles.contactEmail}>{contact.email}</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => this.handleDeleteContact(contact)}
-              >
-                <Image source={DeleteIcon} style={styles.deleteIcon} />
-              </TouchableOpacity>
-            </View>
-          );
-        });
-      
-        return (
-          <View style={styles.container}>
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={this.handleAddContactPress}
-            >
-              <Text style={styles.addButtonText}>Add Contact</Text>
-            </TouchableOpacity>
-            {contactElements}
-          </View>
-        );
-      }
-      
+    } catch (error) {
+      console.log(error);
     }
-      
+  }
+
+  async getContacts() {
+    try {
+      const response = await fetch('http://localhost:3333/api/1.0.0/contacts', {
+        headers: {
+          'X-Authorization': await AsyncStorage.getItem('whatsthat_session_token'),
+        },
+      });
+      const contacts = await response.json();
+      console.log('contacts:', contacts);
+      this.setState({ contacts });
+      contacts.forEach((contact) => {
+        this.getContactPhoto(contact.user_id);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getContactPhoto(contactId) {
+    const token = await AsyncStorage.getItem('whatsthat_session_token');
+    const url = `http://localhost:3333/api/1.0.0/user/${contactId}/photo`;
+    const response = await fetch(url, {
+      headers: {
+        'X-Authorization': token,
+      },
+    });
+
+    if (response.ok) {
+      const contentType = response.headers.get('content-type');
+      if (contentType === 'image/jpeg' || contentType === 'image/png') {
+        const blob = await response.blob();
+        const uri = URL.createObjectURL(blob);
+        this.setState((prevState) => ({
+          contactPhotos: {
+            ...prevState.contactPhotos,
+            [contactId]: uri,
+          },
+        }));
+      }
+    }
+  }
+
+  blockContact(contactId) {
+    // TODO: Implement blocking contact logic
+  }
+
+  removeContact(contactId) {
+    // TODO: Implement removing contact logic
+  }
+
+  handleSearch = (text) => {
+    this.setState({ searchQuery: text });
+  };
+
+  renderContact(contact) {
+    const { user_id, first_name, last_name, email } = contact;
+    const profilePicture = this.state.contactPhotos[user_id] || null;
+
+    // Filter contacts based on search query
+    if (
+      !`${first_name} ${last_name}`.toLowerCase().includes(this.state.searchQuery.toLowerCase()) &&
+      !email.toLowerCase().includes(this.state.searchQuery.toLowerCase())
+    ) {
+      return null;
+    }
+
+    return (
+      <View style={styles.contactcard} key={user_id}>
+        <Image
+          source={{ uri: profilePicture }}
+          style={{ width: 50, height: 50, borderRadius: 25 }}
+        />
+        <View style={{ marginLeft: 10 }}>
+          <Text>{`${first_name} ${last_name}`}</Text>
+          <Text>{email}</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => this.blockContact(user_id)}
+          style={{ marginLeft: 'auto', backgroundColor: 'red', padding: 5, borderRadius: 5 }}
+        >
+          <Text style={{ color: 'white' }}>Block</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => this.removeContact(user_id)}
+          style={{ marginLeft: 10, backgroundColor: 'gray', padding: 5, borderRadius: 5 }}
+        >
+          <Text style={{ color: 'white' }}>Remove</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  render() {
+    return (
+      <View>
+        <SearchBar onSearch={this.handleSearch} />
+        {this.state.contacts.map((contact) => this.renderContact(contact))}
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  contactcard: {
+    flex: 1,
+    flexDirection: 'row', 
+    marginTop: '10px',
+    borderRadius: '6px',
+    width: '95%',
+    opacity: '95%',
+    alignItems: 'center',
+    alignSelf:'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
     
-
-    const styles = StyleSheet.create({
-        container: {
-          flex: 1,
-          backgroundColor: '#fff',
-          padding: 20,
-        },
-        addButton: {
-          alignSelf: 'stretch',
-          justifyContent: 'center',
-          marginBottom: 10,
-          padding: 10,
-          backgroundColor: '#00f',
-          borderRadius: 5,
-        },
-        addButtonText: {
-          color: '#fff',
-          fontWeight: 'bold',
-          fontSize: 16,
-        },
-        contactBox: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          padding: 10,
-          borderWidth: 1,
-          borderColor: '#ccc',
-          borderRadius: 10,
-          marginBottom: 10,
-        },
-        contactInfo: {
-          flex: 1,
-        },
-        contactName: {
-          fontSize: 18,
-          fontWeight: 'bold',
-        },
-        contactEmail: {
-          fontSize: 14,
-          color: '#666',
-        },
-        deleteButton: {
-          width: 50,
-          height: 50,
-          borderRadius: 25,
-          backgroundColor: '#white',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-        profilePicture: {
-          width: 50,
-          height: 50,
-          borderRadius: 25,
-          backgroundColor: 'black',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-        deleteIcon: {
-          width: 20,
-          height: 20,
-        },
-        });
-              
-              
+  },
+  searchBar: {
+    height: 40,
+    width: '95%',
+    alignSelf: 'center',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    marginTop: 10
+  }
+})

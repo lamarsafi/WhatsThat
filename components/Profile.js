@@ -17,7 +17,7 @@ export class Profile extends Component {
   }
 
   async componentDidMount() {
-    this.setState({token: AsyncStorage.getItem('whatsthat_session_token')})
+    this.state.token = await AsyncStorage.getItem('whatsthat_session_token')
     console.log("this", this.state.token)
     try {
       const id = await AsyncStorage.getItem("whatsthat_user_id");

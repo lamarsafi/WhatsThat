@@ -28,7 +28,9 @@ export class Profile extends Component {
         },
       });
       const imageData = await response.blob();
+      console.log(imageData)
       const imageUrl = URL.createObjectURL(imageData);
+      console.log(imageUrl)
       this.setState({ image: imageUrl });
     } catch (error) {
       console.log(error)
@@ -53,6 +55,7 @@ export class Profile extends Component {
 
     const formData = new FormData();
     formData.append('photo', file);
+    console.log(file)
 
     try {
       const id = await AsyncStorage.getItem("whatsthat_user_id");
@@ -60,12 +63,15 @@ export class Profile extends Component {
         method: 'POST',
         headers: {
           'X-Authorization': this.state.token,
+          'Content-Type': file.type
+          
         },
-        body: formData,
+        body: file,
       });
 
-      const data = await response.json();
-      console.log(data);
+      console.log(response)
+      
+      
     } catch (error) {
       console.error(error);
     }

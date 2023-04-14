@@ -262,35 +262,10 @@ export default class Search extends Component {
       
     };
     
-    getProfilePicture = async (user_id) => { // gets the profile picture of the users
-        console.log(token);
-        const { token } = this.state;
-        const response = await fetch(
-            `http://localhost:3333/api/1.0.0/user/${user_id}/photo`,
-            {
-                headers: {
-                    "X-Authorization": token,
-                },
-            }
-        );
 
-        if (!response.ok) {
-            throw new Error("Failed to fetch profile picture");
-        }
-
-        const data = await response.blob();
-        console.log(data);
-        console.log(URL.createObjectURL(data));
-        return URL.createObjectURL(data);
-
-        
-    };
-
-    
-    
 
     renderItem = ({ item : contact }) => {
-      const { searchIn, contacts, userId, profilePictures, blockedUsers } = this.state; // declate states
+      const { searchIn, contacts, userId, profilePictures, blockedUsers } = this.state; // declare states
       const isContact = contacts.find((c) => c.user_id === contact.user_id) || contact.user_id === userId; // bool value -> used for checking if a user is a contact
       const isBlocked = blockedUsers.some((u) => u.user_id === contact.user_id); // bool value -> used for checking if a user is blocked
     

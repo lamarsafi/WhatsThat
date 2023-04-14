@@ -1,6 +1,7 @@
 import React, { useState, Component } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Button, Image } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import defaultImage from '../images/default.jpeg'
 
@@ -90,16 +91,24 @@ export class Profile extends Component {
 
     return (
       <View style={styles.container}>
+        <View style={styles.userSettings}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => this.props.navigation.goBack()}>
+            <Ionicons name="arrow-back" size={25} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Your Profile</Text>
+        </View>
         <Image source={{ uri: image }} style={styles.image} />
-
+    
         <TouchableOpacity onPress={this.handleSubmit} style={styles.button}>
           <Text style={styles.buttonText}>Upload Image</Text>
         </TouchableOpacity>
-
+    
         <input type="file" onChange={this.handleFileSelect} style={styles.input} />
-
       </View>
     );
+    
   }
 }
 
@@ -108,6 +117,27 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  userSettings: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#3498db',
+    height: 50,
+    width: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 10,
+    padding: 10,
+  },
+  headerTitle: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
   },
   image: {
     width: 200,

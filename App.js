@@ -13,6 +13,8 @@ import SecondRegister from './components/Register';
 import Chats from './components/Chats';
 import BlockedContacts from './components/BlockedContacts';
 import Search from './components/Search';
+import ChatRoom from './components/chat_components/ChatRoom.js'
+
 
 
 const AuthStack = createStackNavigator();
@@ -68,6 +70,7 @@ checkLoggedIn = async () => {
                 screenOptions={({ route }) => ({
                   tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
+                    
 
                     if (route.name === 'Home') {
                       iconName = focused ? 'home' : 'home-outline';
@@ -85,16 +88,17 @@ checkLoggedIn = async () => {
                   },
                 })}
               >
-                <Tab.Screen name="Home" component={Home} />
-                <Tab.Screen name="Chats" component={Chats} />
-                <Tab.Screen name="Contacts" component={Contacts} />
-                <Tab.Screen name="Search" component={Search} />
-                <Tab.Screen name="Settings" component={UserSettings} />
+                <Tab.Screen name="Home" component={Home} options={{ headerShown: false }}/>
+                <Tab.Screen name="Chats" component={Chats} options={{ headerShown: false }}/>
+                <Tab.Screen name="Contacts" component={Contacts} options={{ headerShown: false }}/>
+                <Tab.Screen name="Search" component={Search} options={{ headerShown: false }}/>
+                <Tab.Screen name="Settings" component={UserSettings} options={{ headerShown: false }}/>
               </Tab.Navigator>
             )}
           </Stack.Screen>
-          <Stack.Screen name="BlockedContacts" component={BlockedContacts} />
-          <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="BlockedContacts" component={BlockedContacts} options={{ headerShown: false }}/>
+          <Stack.Screen name="ChatRoom" component={ChatRoom} options={{ headerShown: false }}/>
+          <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }}/>
           
         </Stack.Navigator>
       </NavigationContainer>

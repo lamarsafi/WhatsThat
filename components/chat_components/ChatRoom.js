@@ -160,16 +160,19 @@ export default class ChatRoom extends Component {
               }
             >
               <Ionicons name="settings-outline" size={30} color="white" />
+              
             </TouchableOpacity>
           </View>
-          <ScrollView style={styles.messageListContainer}>
-            <FlatList
-              data={this.state.messages}
-              renderItem={this.renderMessageItem}
-              keyExtractor={(item, index) => index.toString()}
-              inverted
-            />
-          </ScrollView>
+          <View style={{ height: 650, marginTop: 60 }}>
+            <ScrollView style={{ flex: 1 }}>
+              <FlatList
+                data={this.state.messages}
+                renderItem={this.renderMessageItem}
+                keyExtractor={(item, index) => index.toString()}
+                inverted
+              />
+            </ScrollView>
+          </View>
         </View>
         <View style={styles.inputContainer}>
           <TextInput
@@ -221,10 +224,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   messageListContainer: {
-    flex: 1,
+    height: 5, // or any other specific value
     paddingHorizontal: 10,
-    marginTop: 80, 
+    marginTop: 50,
+    overflow: "scroll" // or "auto"
   },
+  
   messageContainer: {
     marginVertical: 5,
     flexDirection: "row",
@@ -266,6 +271,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopWidth: 1,
     borderTopColor: "#DDDDDD",
+    position: "fixed",
+    width: "100%",
+    zIndex: 999, 
+    bottom: 0
   },
   textInput: {
     flex: 1,

@@ -14,6 +14,7 @@ import Chats from './components/Chats';
 import BlockedContacts from './components/BlockedContacts';
 import Search from './components/Search';
 import ChatRoom from './components/chat_components/ChatRoom.js'
+import ChatSettings from './components/chat_components/ChatSettings';
 
 
 
@@ -98,6 +99,7 @@ checkLoggedIn = async () => {
           </Stack.Screen>
           <Stack.Screen name="BlockedContacts" component={BlockedContacts} options={{ headerShown: false }}/>
           <Stack.Screen name="ChatRoom" component={ChatRoom} options={{ headerShown: false }}/>
+          <Stack.Screen name="ChatSettings" component={ChatSettings} options={{ headerShown: false }}/>
           <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }}/>
           
         </Stack.Navigator>

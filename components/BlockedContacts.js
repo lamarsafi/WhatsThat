@@ -52,7 +52,7 @@ export default class BlockedContacts extends Component {
   handleUnblock = async (id) => {
     console.log(id);
     try {
-      const userID = await AsyncStorage.getItem('whatsthat_user_id');
+      const userID = await AsyncStorage.getItem('whatsthat_user_id')
       const sessionToken = await AsyncStorage.getItem('whatsthat_session_token');
       const response = await fetch(
         `http://localhost:3333/api/1.0.0/user/${id}/block`,
@@ -155,7 +155,7 @@ export default class BlockedContacts extends Component {
       },
 
       header: {
-        backgroundColor: 'black',
+        backgroundColor: '#4b9cdb',
         paddingHorizontal: 10,
         paddingVertical: 10,
         flexDirection: 'row',
@@ -171,11 +171,10 @@ export default class BlockedContacts extends Component {
         fontSize: 18,
       },
       headerIcon: {
-        color: 'black',
+        color: '#4b9cdb',
         fontSize: 28,
         marginRight: 10,
-      },
-      
+      },      
       searchContainer: {
       flexDirection: 'row',
       alignItems: 'center',

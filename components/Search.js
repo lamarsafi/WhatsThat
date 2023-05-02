@@ -293,11 +293,12 @@ export default class Search extends Component {
               // if searchIn value is in contacts -> display the following
               <TouchableOpacity style={{ marginRight: 10 }} onPress={() => this.blockContact(contact.user_id)}>
                 <Image source={require("../images/block.png")} style={{ 
-                  width: 35,
-                  height: 35,
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  borderRadius: 5
+                  width: 26,
+                  height: 26,
+                  paddingVertical: 4,
+                  paddingHorizontal: 8,
+                  borderRadius: 5,
+                  fontSize: '10px'
                    }} />
               </TouchableOpacity>
             )}
@@ -307,14 +308,15 @@ export default class Search extends Component {
                   color: "white",
                   fontWeight: "bold",
                   backgroundColor: "red",
-                  paddingVertical: 8,
-                  paddingHorizontal: 12,
-                  borderRadius: 5
+                  paddingVertical: 4,
+                  paddingHorizontal: 8,
+                  borderRadius: 5,
+                  fontSize: '10px'
                 }}>Remove</Text>
               </TouchableOpacity>
             ) : canAddContact ? ( // returns the following if the user can be added
               <TouchableOpacity onPress={() => this.handleAddContact(contact.user_id)}>
-                <Text style={{ color: "blue", fontWeight: "bold" }}>Add</Text>
+                <Text style={{ color: "#4b9cdb", fontWeight: "bold", fontSize: '10px' }}>Add</Text>
               </TouchableOpacity>
             ) : null}
           </View>
@@ -329,8 +331,8 @@ export default class Search extends Component {
       const { query, searchIn, users, loading } = this.state;
       const shouldClearResults = this.state.prevSearchIn !== searchIn;
       return (
-        <View style={{ flex: 1, padding: 10 }}>
-          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+        <View style={{ flex: 1, padding: 10, backgroundColor: 'fff' }}>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10,  backgroundColor: 'fff' }}>
             <TextInput
               style={{
                 flex: 1,
@@ -345,7 +347,7 @@ export default class Search extends Component {
               placeholder="Search"
             />
             <TouchableOpacity onPress={this.handleSearch}>
-              <Text style={{ color: "blue", fontWeight: "bold" }}>Search</Text>
+              <Text style={{ color: "#4b9cdb", fontWeight: "bold" }}>Search</Text>
             </TouchableOpacity>
           </View>
           <View
@@ -361,11 +363,11 @@ export default class Search extends Component {
             >
               <Text
                 style={{
-                  color: searchIn === "all" ? "blue" : "black",
+                  color: searchIn === "all" ? "#4b9cdb" : "black",
                   fontSize: 16,
                   fontWeight: "bold",
                   textDecorationLine: searchIn === "all" ? "underline" : "none",
-                }}
+                }} 
               >
                 All
               </Text>
@@ -375,7 +377,7 @@ export default class Search extends Component {
             >
               <Text
                 style={{
-                  color: searchIn === "contacts" ? "blue" : "black",
+                  color: searchIn === "contacts" ? "#4b9cdb" : "black",
                   fontSize: 16,
                   fontWeight: "bold",
                   textDecorationLine: searchIn === "contacts" ? "underline" : "none",

@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
-      opacity: '80%',
+     
       
     },
     box: {
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: 'white',
+      color: '#1F1F1F',
       marginBottom: 20,
       
       

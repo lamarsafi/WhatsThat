@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Modal } from 'react-native';
 
 export default class SecondLogin extends Component {
   
@@ -11,6 +12,7 @@ export default class SecondLogin extends Component {
             name: null,
             password: null,
             error: null,
+            showModal: false,
         }
     }
 
@@ -38,75 +40,88 @@ export default class SecondLogin extends Component {
     }
 
     handleSubmit = (e) => {
-      const navigation = this.props.navigation;
-        
-    
-        fetch('http://localhost:3333/api/1.0.0/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            "email": this.state.email,
-            "password": this.state.password,
-          }),
+      fetch('http://localhost:3333/api/1.0.0/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: this.state.email,
+          password: this.state.password,
+        }),
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            throw new Error("Incorrect email/password");
+          }
         })
-          .then(response => {
-            if (response.status === 200) {
-              return response.json();
-            } else {
-              throw "Unable to Login"
-            }
-          })
-          .then(async (responseJSON) => {
-            console.log(responseJSON)
-            try {
-              await AsyncStorage.setItem("whatsthat_user_id", responseJSON.id)
-              await AsyncStorage.setItem("whatsthat_session_token", responseJSON.token)
-              window.location.reload()
-    
-              
-            } catch {
-              throw "An error has occurred"
-            }
-          })
-          .catch(error => console.error(error));
-
-          const myUserId = AsyncStorage.getItem("whatsthat_user_id")
-          console.log("Logged in.. your id is: ", myUserId)
-      }
-
-      render(){
-        
-        return(
-            <View style={styles.container}>
-            <View style={styles.box}>
-              <Text style={styles.title}>Login</Text>
-              <TextInput
-                style={styles.input}
-                value={this.state.email}
-                onChangeText={(value) => this.setState({ email: value })}
-                placeholder='youremail@gmail.com'
-                keyboardType='email-address'
-              />
-              <TextInput
-                style={styles.input}
-                value={this.state.password}
-                onChangeText={(value) => this.setState({ password: value })}
-                placeholder='*******'
-                secureTextEntry={true}
-              />
-
-              <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
-                <Text style={styles.buttonText}>Log In</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.secondaryButton} onPress={() => this.props.navigation.navigate('Register')}>
-                <Text style={styles.secondaryButtonText}>Don't have an account? Sign up here!</Text>
-              </TouchableOpacity>
-      
-            </View>
+        .then(async (responseJSON) => {
+          console.log(responseJSON);
+          try {
+            await AsyncStorage.setItem("whatsthat_user_id", responseJSON.id);
+            await AsyncStorage.setItem("whatsthat_session_token", responseJSON.token);
+            window.location.reload();
+          } catch {
+            throw new Error("An error has occurred");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          this.setState({ error: "Incorrect email/password", showModal: true });
+        });
+    };
+  
+    render() {
+      return (
+        <View style={styles.container}>
+          <View style={styles.box}>
+            <Text style={styles.title}>Login</Text>
+            <TextInput
+              style={styles.input}
+              value={this.state.email}
+              onChangeText={(value) => this.setState({ email: value })}
+              placeholder="youremail@gmail.com"
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.input}
+              value={this.state.password}
+              onChangeText={(value) => this.setState({ password: value })}
+              placeholder="*******"
+              secureTextEntry={true}
+            />
+  
+            <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
+              <Text style={styles.buttonText}>Log In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => this.props.navigation.navigate('Register')}
+            >
+              <Text style={styles.secondaryButtonText}>Don't have an account? Sign up here!</Text>
+            </TouchableOpacity>
           </View>
-        )
+  
+          {/* Modal pop-up */}
+          <Modal
+            visible={this.state.showModal}
+            transparent={true}
+            animationType="fade"
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.errorText}>{this.state.error}</Text>
+                <Button style={styles.modalButton}
+                  title="Close"
+                  onPress={() => this.setState({ showModal: false })}
+                />
+              </View>
+            </View>
+          </Modal>
+        </View>
+      );
     }
 
 
@@ -173,5 +188,28 @@ const styles = StyleSheet.create({
       color: '#0066FF',
       textDecorationLine: 'underline',
     },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      borderRadius: 5
+    },
+    modalContent: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 10,
+      padding: 20,
+      alignItems: 'center',
+      borderRadius: 5
+    },
+    errorText: {
+      fontSize: 18,
+      marginBottom: 10,
+      textAlign: 'center',
+      color: 'red',
+    },
+    modalButton: {
+      borderRadius: 10
+    }
   });
   

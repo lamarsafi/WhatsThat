@@ -46,6 +46,7 @@ export class Profile extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
+    const {image} = this.state;
 
     const { file } = this.state;
 
@@ -70,13 +71,36 @@ export class Profile extends Component {
         body: file,
       });
 
+      
       console.log(response)
+      this.refreshImage()
       
       
     } catch (error) {
       console.error(error);
     }
   }
+
+  refreshImage = async () => {
+    try {
+      const id = await AsyncStorage.getItem("whatsthat_user_id");
+      const token = await AsyncStorage.getItem("whatsthat_session_token");
+      const response = await fetch(`http://localhost:3333/api/1.0.0/user/${id}/photo`, {
+        headers: {
+          'X-Authorization': `${token}`,
+        },
+      });
+      const imageData = await response.blob();
+      console.log(imageData)
+      const imageUrl = URL.createObjectURL(imageData);
+      console.log(imageUrl)
+      this.setState({ image: imageUrl });
+    } catch (error) {
+      console.log(error)
+      this.setState({ image: defaultImage, error });
+    }
+  }
+
 
   render() {
     const { image, error } = this.state;

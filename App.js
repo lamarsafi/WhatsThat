@@ -6,8 +6,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import UserSettings from './components/Settings';
 import { Profile } from './components/Profile';
-import SecondLogin from './components/Login';
-import SecondRegister from './components/Register';
+import Login from './components/Login';
+import Register from './components/Register';
 import Chats from './components/Chats';
 import BlockedContacts from './components/BlockedContacts';
 import Search from './components/Search';
@@ -56,8 +56,8 @@ checkLoggedIn = async () => {
       return (
         <NavigationContainer>
           <AuthStack.Navigator>
-            <AuthStack.Screen name="Login" component={SecondLogin} options={{ headerShown: false }} />
-            <AuthStack.Screen name="Register" component={SecondRegister} options={{ headerShown: false }} />
+            <AuthStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+            <AuthStack.Screen name="Register" component={Register} options={{ headerShown: false }} />
           </AuthStack.Navigator>
         </NavigationContainer>
       );
@@ -91,8 +91,8 @@ checkLoggedIn = async () => {
                 
                 <Tab.Screen name="Chats" component={Chats} options={{ headerShown: false }}/>
                 <Tab.Screen name="Search" component={Search} options={{ headerShown: false }}/>
-                <Tab.Screen name="Settings" component={UserSettings} options={{ headerShown: false }}/>
                 <Tab.Screen name="Profile" component={Profile} options={{ headerShown: false }}/>
+                <Tab.Screen name="Settings" component={UserSettings} options={{ headerShown: false }}/>
               </Tab.Navigator>
             )}
           </Stack.Screen>

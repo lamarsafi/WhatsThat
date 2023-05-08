@@ -40,7 +40,7 @@ export class ChangeEmail extends Component {
       return;
     }
 
-    const { email } = this.state;
+    const { email, emailError } = this.state;
     const userId = await AsyncStorage.getItem('whatsthat_user_id'); 
     const token = await AsyncStorage.getItem('whatsthat_session_token');
 
@@ -64,6 +64,8 @@ export class ChangeEmail extends Component {
         console.log(response);
         if (response.ok) {
           this.showSuccessModal();
+        } else if(response.status == 400) {
+            this.setState({ emailError: true });
         }
       })
   };

@@ -54,7 +54,7 @@ export default class SecondRegister extends Component {
           console.log(response);
           this.setState({ responseStatus: response.status });
           if (response.ok) {
-            return response.json();
+            this.props.navigation.navigate("Login");
           } else if (response.status === 400) {
             throw new Error("Bad Request");
           }

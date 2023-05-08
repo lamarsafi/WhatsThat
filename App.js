@@ -4,8 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import Home from './components/Home';
-import Contacts from './components/Contacts';
 import UserSettings from './components/Settings';
 import { Profile } from './components/Profile';
 import SecondLogin from './components/Login';
@@ -15,6 +13,9 @@ import BlockedContacts from './components/BlockedContacts';
 import Search from './components/Search';
 import ChatRoom from './components/chat_components/ChatRoom.js'
 import ChatSettings from './components/chat_components/ChatSettings';
+import { ChangeName } from './components/ChangeName';
+import {ChangeEmail} from './components/ChangeEmail';
+import { ChangePassword } from './components/ChangePassword';
 
 
 
@@ -73,27 +74,25 @@ checkLoggedIn = async () => {
                     let iconName;
                     
 
-                    if (route.name === 'Home') {
-                      iconName = focused ? 'home' : 'home-outline';
-                    } else if (route.name === 'Contacts') {
-                      iconName = focused ? 'send' : 'send-outline';
-                    } else if (route.name === 'Search') {
+                    if (route.name === 'Search') {
                       iconName = focused ? 'search' : 'search-outline';
                     }else if (route.name === 'Settings') {
                       iconName = focused ? 'settings' : 'settings-outline';
                     } else if (route.name === 'Chats') {
                       iconName = focused ? 'chatbox' : 'chatbox-ellipses-outline';
+                    } else if (route.name === 'Profile') {
+                      iconName = focused ? 'person' : 'person-outline';
                     }
                     
                     return <IonIcons name={iconName} size={size} color={color} />;
                   },
                 })}
               >
-                <Tab.Screen name="Home" component={Home} options={{ headerShown: false }}/>
+                
                 <Tab.Screen name="Chats" component={Chats} options={{ headerShown: false }}/>
-                <Tab.Screen name="Contacts" component={Contacts} options={{ headerShown: false }}/>
                 <Tab.Screen name="Search" component={Search} options={{ headerShown: false }}/>
                 <Tab.Screen name="Settings" component={UserSettings} options={{ headerShown: false }}/>
+                <Tab.Screen name="Profile" component={Profile} options={{ headerShown: false }}/>
               </Tab.Navigator>
             )}
           </Stack.Screen>
@@ -101,7 +100,9 @@ checkLoggedIn = async () => {
           <Stack.Screen name="ChatRoom" component={ChatRoom} options={{ headerShown: false }}/>
           <Stack.Screen name="ChatSettings" component={ChatSettings} options={{ headerShown: false }}/>
           <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }}/>
-          
+          <Stack.Screen name="ChangeName" component={ChangeName} options={{ headerShown: false }}/>
+          <Stack.Screen name="ChangeEmail" component={ChangeEmail} options={{ headerShown: false }}/>
+          <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     );

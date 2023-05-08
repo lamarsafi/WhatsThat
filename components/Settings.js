@@ -67,6 +67,15 @@ function Settings() {
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Profile')}>
         <Text style={styles.buttonText}>View Profile</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ChangeName')}>
+        <Text style={styles.buttonText}>Change Name</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ChangeEmail')}>
+        <Text style={styles.buttonText}>Change Email</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ChangePassword')}>
+        <Text style={styles.buttonText}>Change Password</Text>
+      </TouchableOpacity>
     </View>
   );
   

@@ -28,7 +28,7 @@ export default class Search extends Component {
         };
     }
 
-    async componentDidMount() { // setting up the states -> token, userId, contacts & blocked users
+    async componentDidMount() { // Setting up the states -> token, userId, contacts & blocked users
         try {
             const token = await AsyncStorage.getItem("whatsthat_session_token");
             const userId = await AsyncStorage.getItem("whatsthat_user_id");
@@ -37,18 +37,23 @@ export default class Search extends Component {
             this.setState({ token, userId });
             this.setContactsState();
             this.fetchBlockedUsers();
+            this.updateDataInterval = setInterval(() => this.updateData(), 5000); // Updates every 5 seconds to see if there's any changes
         } catch (error) {
             console.log(error);
         }
     }
-
-    async componentDidUpdate() { // mainly used for updating the photos, fetching blocked users and updating the contacts state
+    
+    componentWillUnmount() {
+      clearInterval(this.updateDataInterval);
+    }
+    
+    async updateData() {
       const { users, profilePictures } = this.state;
       const { token } = this.state;
-      const newProfilePictures = { ...profilePictures };
+      const newProfilePictures = { ...profilePictures }; // Create a new copy of the profilePictures object
       this.setContactsState();
       this.fetchBlockedUsers();
-  
+    
       // fetch profile picture for each user that doesn't have it already
       for (const user of users) {
         if (!newProfilePictures[user.user_id]) {
@@ -61,21 +66,21 @@ export default class Search extends Component {
                 },
               }
             );
-      
+    
             if (!response.ok) {
               throw new Error("Failed to fetch profile picture");
             }
-      
+    
             const data = await response.blob();
             const profilePictureUrl = URL.createObjectURL(data);
-  
+    
             newProfilePictures[user.user_id] = profilePictureUrl;
           } catch (error) {
             console.log(error);
           }
         }
       }
-  
+    
       // update state with new profile pictures
       if (Object.keys(newProfilePictures).length > Object.keys(profilePictures).length) {
         this.setState({ profilePictures: newProfilePictures });
@@ -331,7 +336,7 @@ export default class Search extends Component {
       const { query, searchIn, users, loading } = this.state;
       const shouldClearResults = this.state.prevSearchIn !== searchIn;
       return (
-        <View style={{ flex: 1, padding: 10, backgroundColor: 'fff' }}>
+        <View style={{ flex: 1, padding: 10, backgroundColor: '#fff', }}>
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10,  backgroundColor: 'fff' }}>
             <TextInput
               style={{

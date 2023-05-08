@@ -1,6 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet, TextInput } from "react-native";
+import Modal from "react-native-modal";
+import { Dimensions } from "react-native";
+
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 export default class Chats extends Component {
   constructor(props) {
@@ -8,6 +14,8 @@ export default class Chats extends Component {
 
     this.state = {
       chats: [],
+      isModalVisible: false,
+      chatName: "",
     };
   }
 
@@ -42,8 +50,43 @@ export default class Chats extends Component {
   
 
   componentDidUpdate() {
-    this.getChats();
+    // Clear the previous interval if it exists
+    if (this.chatsInterval) {
+      clearInterval(this.chatsInterval);
+    }
+  
+    // Set a new interval to call getChats every 5 seconds
+    this.chatsInterval = setInterval(() => {
+      this.getChats();
+    }, 5000); 
   }
+
+  toggleModal = () => {
+    this.setState((prevState) => ({
+      isModalVisible: !prevState.isModalVisible,
+    }));
+  };
+
+  confirmCreateChat = async () => {
+    const { chatName } = this.state;
+    const token = await AsyncStorage.getItem('whatsthat_session_token')
+    console.log(token)
+    
+
+    fetch('http://localhost:3333/api/1.0.0/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Authorization': token
+          },
+          body: JSON.stringify({
+            "name": chatName,
+          }),
+        })
+
+    this.toggleModal();
+  };
+  
 
   render() {
     return (
@@ -51,7 +94,7 @@ export default class Chats extends Component {
         <View style={styles.header}>
           <Text style={styles.headerText}>Your Chats</Text>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("CreateChat")}
+            onPress={this.toggleModal}
           >
             <Image
               source={require("../images/plus.png")}
@@ -69,24 +112,124 @@ export default class Chats extends Component {
               }
             >
               <Text style={styles.chatName}>{chat.name}</Text>
-              <Text style={styles.chatLastMessage}>
-                {chat.last_message && chat.last_message.author &&
+              <Text>
+                {/* Display the first name of the author of the last message */}
+                <Text>
+                <Text style={styles.authorName}>{chat.last_message && chat.last_message.author &&
                   chat.last_message.author.first_name &&
                   chat.last_message.author.first_name}{" "}
+                  </Text>
+                  
+                
+                {/* Display the last name of the author of the last message */}
                 {chat.last_message && chat.last_message.author &&
-                  chat.last_message.author.last_name &&
-                  chat.last_message.author.last_name}:{" "}
-                {chat.last_message && chat.last_message.message}
+                  chat.last_message.author.last_name && (
+                    <Text style={styles.authorName}>
+                      {chat.last_message.author.last_name}:{" "}
+                    </Text>
+                  )}
+
+                {/* Display the content of the last message */}
+                <Text>
+                  {chat.last_message && chat.last_message.message &&
+                    (chat.last_message.message.length > 15
+                      ? chat.last_message.message.slice(0, 15) + "..."
+                      : chat.last_message.message)}{" "}
+                </Text>
+
+                {/* Display the timestamp of the last message */}
+                <Text style={styles.boldText}>
+                  {chat.last_message &&
+                    chat.last_message.timestamp &&
+                    new Date(chat.last_message.timestamp * 1000).toLocaleTimeString()}
+                </Text>
+
+                </Text>
               </Text>
             </TouchableOpacity>
           ))}
         </View>
+
+        <Modal visible={this.state.isModalVisible} animationType="none">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TextInput
+                style={styles.textInput}
+                onChangeText={(text) => this.setState({ chatName: text })}
+                value={this.state.chatName}
+                placeholder="Enter chat name"
+              />
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.confirmButton} onPress={this.confirmCreateChat}>
+                  <Text style={styles.buttonText}>Confirm</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.cancelButton} onPress={this.toggleModal}>
+                  <Text style={styles.buttonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          </Modal>
+
       </View>
+
+
+      
     );
   }
 }
 
+
+
 const styles = StyleSheet.create({
+  modalContainer: {
+    position: "absolute",
+    left:-20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    width: windowWidth,
+    height: windowHeight,
+  },
+  
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    height: 125,
+  },
+  textInput: {
+    width: '100%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  confirmButton: {
+    backgroundColor: 'green',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  cancelButton: {
+    backgroundColor: 'red',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -123,4 +266,17 @@ const styles = StyleSheet.create({
   chatLastMessage: {
     fontSize: 16,
   },
+  chatLastMessage: {
+    // Your existing styles for the chat last message
+  },
+  boldText: {
+    fontWeight: 'bold',
+    
+  },
+  authorName: {
+    fontWeight: 'bold',
+    fontStyle: 'italic'
+  },
 });
+
+

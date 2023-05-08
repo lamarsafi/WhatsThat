@@ -39,11 +39,11 @@ export default class SecondRegister extends Component {
         email: this.state.email,
         password: this.state.password,
       };
-
+  
       console.log(registerInformation);
       console.log(JSON.stringify(registerInformation));
-
-      return fetch("http://localhost:3333/api/1.0.0/user", {
+  
+      fetch("http://localhost:3333/api/1.0.0/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,24 +52,32 @@ export default class SecondRegister extends Component {
       })
         .then((response) => {
           console.log(response);
+          this.setState({ responseStatus: response.status });
           if (response.ok) {
             return response.json();
           } else if (response.status === 400) {
-            throw new Error("Invalid email/password");
-          } else {
-            throw new Error("Something went wrong");
+            throw new Error("Bad Request");
           }
         })
         .then((rJson) => {
           console.log(rJson);
         })
         .catch((error) => {
-          console.log(error.message);
+          if (error.message === "Bad Request") {
+            const emailError = {
+              ...errors,
+              email: "Email already exists.",
+            };
+            this.setState({ errors: emailError });
+          } else {
+            console.log(error.message);
+          }
         });
     } else {
       this.setState({ errors });
     }
   };
+  
 
   validate = () => {
     const PasswordRegex =
